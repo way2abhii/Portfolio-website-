@@ -2712,7 +2712,10 @@
                 <div class="contact-detail-item"><span class="contact-detail-icon">📧</span>
                     <div>
                         <div class="contact-detail-label">Email</div>
-                        <div class="contact-detail-text" id="cEmail">abhinavvarshney3005@gmail.com</div>
+                        <div class="contact-detail-text" id="cEmail"><a href="/cdn-cgi/l/email-protection"
+                                class="__cf_email__"
+                                data-cfemail="3554575d5c5b5443435447465d5b504c06050500755258545c591b565a58">[email&#160;protected]</a>
+                        </div>
                     </div>
                 </div>
                 <div class="contact-detail-item"><span class="contact-detail-icon">📱</span>
@@ -2774,7 +2777,18 @@
         <div class="admin-container">
             <div class="admin-top">
                 <h2>🕷️ SPIDER CONTROL CENTER</h2>
-                <button class="admin-close-btn" id="adminCloseBtn">✕</button>
+                <div style="display:flex;gap:15px;align-items:center;">
+                    <div
+                        style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(39,174,96,0.15);border:1px solid #27ae60;border-radius:4px;">
+                        <div
+                            style="width:8px;height:8px;background:#27ae60;border-radius:50%;animation:pulse 2s infinite;">
+                        </div>
+                        <span
+                            style="font-family:'Bangers',cursive;font-size:0.9rem;color:#27ae60;letter-spacing:2px;">LIVE
+                            EDITING</span>
+                    </div>
+                    <button class="admin-close-btn" id="adminCloseBtn">✕</button>
+                </div>
             </div>
 
             <!-- Tabs -->
@@ -3034,6 +3048,7 @@
     <!-- Toast -->
     <div class="toast" id="toastMsg">✓ Updated!</div>
 
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
         // ============================================
         // SOUND ENGINE (Web Audio API)
@@ -3518,11 +3533,34 @@
 
         // Add achievement
         document.getElementById('addAchBtn').addEventListener('click', function () {
+            addAchievementRow('');
+        });
+
+        function addAchievementRow(val) {
             var row = document.createElement('div');
             row.className = 'ach-row';
-            row.innerHTML = '<input type="text" class="ach-inp" placeholder="Enter achievement..."><button class="rm-btn" onclick="this.parentElement.remove()">\u2715</button>';
+            row.innerHTML = '<input type="text" class="ach-inp" value="' + (val || '') + '" placeholder="Enter achievement..."><button class="rm-btn" onclick="this.parentElement.remove(); liveUpdateAchievements();">\u2715</button>';
+            var inp = row.querySelector('.ach-inp');
+            inp.addEventListener('input', liveUpdateAchievements);
             document.getElementById('adminAchList').appendChild(row);
-        });
+        }
+
+        function liveUpdateAchievements() {
+            var achievements = [];
+            document.querySelectorAll('.ach-inp').forEach(function (inp) {
+                if (inp.value.trim()) achievements.push(inp.value.trim());
+            });
+            var board = document.getElementById('achievementsBoard');
+            var icons = ['\u{1F3C6}', '\u{1F680}', '\u{1F4A1}', '\u{1F3AF}', '\u2B50', '\u{1F31F}', '\u{1F48E}', '\u{1F525}'];
+            board.innerHTML = '';
+            achievements.forEach(function (a, i) {
+                var c = document.createElement('div');
+                c.className = 'achievement-pin reveal-item visible';
+                c.style.transform = 'rotate(' + ((i % 2 === 0 ? -2 : 2) * (i % 3 + 1) * 0.5) + 'deg)';
+                c.innerHTML = '<div class="achievement-pin-icon">' + icons[i % icons.length] + '</div><div class="achievement-pin-text">' + a + '</div>';
+                board.appendChild(c);
+            });
+        }
 
         // Image uploads
         function setupImgUpload(inputId, previewId, storageKey) {
@@ -3569,6 +3607,36 @@
             document.getElementById('setConfPwd').value = '';
         });
 
+        // Field mapping: admin input ID -> page element ID
+        var fieldMap = {
+            aName: 'heroName', aSubtitle: 'heroSubtitle', aAlias: 'caseAlias', aRole: 'caseRole', aBase: 'caseBase',
+            aDesc1: 'aboutDesc1', aDesc2: 'aboutDesc2', aDesc3: 'aboutDesc3',
+            aStatP: 'statP', aStatT: 'statT', aStatE: 'statE',
+            aP1T: 'proj1T', aP1D: 'proj1D', aP2T: 'proj2T', aP2D: 'proj2D', aP3T: 'proj3T', aP3D: 'proj3D',
+            aExpDate: 'expDate', aExpTitle: 'expTitle', aExpComp: 'expCompany',
+            aEdu1D: 'edu1Deg', aEdu1S: 'edu1Sch', aEdu1Y: 'edu1Yr', aEdu2D: 'edu2Deg', aEdu2S: 'edu2Sch', aEdu2Y: 'edu2Yr',
+            aEmail: 'cEmail', aPhone: 'cPhone', aLoc: 'cLoc', aGithub: 'cGithub',
+            aPin1: 'pin1', aPin2: 'pin2', aPin3: 'pin3', aPin4: 'pin4',
+            aPin5: 'pin5', aPin6: 'pin6', aPin7: 'pin7', aPin8: 'pin8'
+        };
+
+        // LIVE EDITING: Update page instantly as user types
+        function setupLiveEditing() {
+            for (var adminId in fieldMap) {
+                var adminInput = document.getElementById(adminId);
+                var pageElement = document.getElementById(fieldMap[adminId]);
+                if (adminInput && pageElement) {
+                    adminInput.addEventListener('input', function (e) {
+                        var targetId = fieldMap[e.target.id];
+                        var targetEl = document.getElementById(targetId);
+                        if (targetEl) {
+                            targetEl.textContent = e.target.value;
+                        }
+                    });
+                }
+            }
+        }
+
         // Load admin data
         function loadAdminData() {
             var d = JSON.parse(localStorage.getItem('spideyData') || '{}');
@@ -3590,12 +3658,11 @@
                 var list = document.getElementById('adminAchList');
                 list.innerHTML = '';
                 d.achievements.forEach(function (a) {
-                    var row = document.createElement('div');
-                    row.className = 'ach-row';
-                    row.innerHTML = '<input type="text" class="ach-inp" value="' + a + '"><button class="rm-btn" onclick="this.parentElement.remove()">\u2715</button>';
-                    list.appendChild(row);
+                    addAchievementRow(a);
                 });
             }
+            // Setup live editing after loading data
+            setupLiveEditing();
         }
 
         // Save all
@@ -3708,6 +3775,7 @@
             el.addEventListener('mouseenter', function () { playHover(); });
         });
     </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'a1b9e2d55a708997',t:'MTc4NDEzMDI0MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
 </body>
 
 </html>
