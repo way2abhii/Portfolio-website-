@@ -1,0 +1,3713 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abhinav Varshney | The Web Developer</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bangers&family=Permanent+Marker&family=Special+Elite&family=Space+Grotesk:wght@300;400;500;600;700&family=Creepster&family=Comic+Neue:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --spidey-red: #c0392b;
+            --spidey-dark-red: #8b0000;
+            --spidey-blue: #1a237e;
+            --spidey-dark-blue: #0d1442;
+            --web-white: #f5f5f5;
+            --gold: #ffd700;
+            --bg-wall: #1a1a1a;
+            --tape: rgba(255, 255, 200, 0.7);
+            --string-red: #e74c3c;
+            --paper: #f4f0e8;
+            --sticky-yellow: #fff59d;
+            --sticky-pink: #f8bbd0;
+            --sticky-blue: #b3e5fc;
+            --sticky-green: #c8e6c9;
+            --newspaper: #f5f0e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-wall);
+            color: #333;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ============================================
+           LOADING - Web Spinning
+        ============================================ */
+        .loader-screen {
+            position: fixed;
+            inset: 0;
+            background: #0a0a0a;
+            z-index: 200000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 1s, visibility 1s;
+        }
+
+        .loader-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .web-loader {
+            width: 120px;
+            height: 120px;
+            animation: webSpin 3s linear infinite;
+        }
+
+        @keyframes webSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-text {
+            font-family: 'Bangers', cursive;
+            font-size: 1.8rem;
+            color: var(--spidey-red);
+            margin-top: 20px;
+            letter-spacing: 4px;
+            animation: loadPulse 1.5s infinite;
+        }
+
+        @keyframes loadPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* ============================================
+           WEB SHOOT INTRO ANIMATION
+        ============================================ */
+        .web-intro {
+            position: fixed;
+            inset: 0;
+            z-index: 150000;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .web-intro.active {
+            opacity: 1;
+        }
+
+        .web-line-anim {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            transform-origin: top left;
+        }
+
+        /* ============================================
+           WALL BACKGROUND
+        ============================================ */
+        .wall-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+                repeating-linear-gradient(0deg, transparent, transparent 48px, #111 48px, #111 50px),
+                repeating-linear-gradient(90deg, transparent, transparent 98px, #111 98px, #111 100px);
+            background-color: #2a2a2a;
+        }
+
+        .web-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0 L30 60 M0 30 L60 30 M0 0 L60 60 M60 0 L0 60' stroke='white' stroke-width='0.5' fill='none'/%3E%3C/svg%3E");
+        }
+
+        /* ============================================
+           SPIDER CRAWLING
+        ============================================ */
+        .spider-crawl {
+            position: fixed;
+            z-index: 99990;
+            pointer-events: none;
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .spider-crawl.active {
+            opacity: 0.7;
+        }
+
+        .spider-thread {
+            position: fixed;
+            z-index: 99989;
+            pointer-events: none;
+            width: 1px;
+            background: rgba(255, 255, 255, 0.3);
+            transform-origin: top center;
+        }
+
+        /* ============================================
+           COMIC ACTION WORDS
+        ============================================ */
+        .comic-burst {
+            position: fixed;
+            z-index: 99995;
+            pointer-events: none;
+            font-family: 'Bangers', cursive;
+            font-size: 3rem;
+            color: var(--spidey-red);
+            text-shadow: 3px 3px 0 #000, -1px -1px 0 #000;
+            opacity: 0;
+            transform: scale(0) rotate(-15deg);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .comic-burst.show {
+            opacity: 1;
+            transform: scale(1) rotate(-15deg);
+        }
+
+        /* ============================================
+           SPIDER SENSE RIPPLE
+        ============================================ */
+        .sense-ripple {
+            position: fixed;
+            z-index: 99988;
+            pointer-events: none;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid rgba(192, 57, 43, 0.4);
+            animation: rippleOut 1.5s ease-out forwards;
+        }
+
+        @keyframes rippleOut {
+            0% {
+                width: 20px;
+                height: 20px;
+                opacity: 0.8;
+                margin: -10px 0 0 -10px;
+            }
+
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+                margin: -150px 0 0 -150px;
+            }
+        }
+
+        /* ============================================
+           MASK TOGGLE
+        ============================================ */
+        .mask-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid var(--spidey-red);
+            background: rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 0 20px rgba(192, 57, 43, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .mask-toggle:hover {
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 0 40px rgba(192, 57, 43, 0.8);
+        }
+
+        .mask-toggle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s;
+        }
+
+        .mask-toggle .mask-label {
+            position: absolute;
+            bottom: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Bangers', cursive;
+            font-size: 0.6rem;
+            color: var(--spidey-red);
+            white-space: nowrap;
+            letter-spacing: 2px;
+        }
+
+        /* ============================================
+           NAV
+        ============================================ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 30px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.6);
+            border-bottom: 2px solid rgba(192, 57, 43, 0.3);
+        }
+
+        .nav-logo {
+            font-family: 'Bangers', cursive;
+            font-size: 1.6rem;
+            color: var(--spidey-red);
+            text-shadow: 2px 2px 0 #000;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px;
+            list-style: none;
+            margin-left: auto;
+            margin-right: 100px;
+        }
+
+        .nav-links a {
+            color: var(--web-white);
+            text-decoration: none;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            position: relative;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: var(--spidey-red);
+            border-color: var(--spidey-red);
+            background: rgba(192, 57, 43, 0.1);
+            transform: rotate(-1deg);
+        }
+
+        /* ============================================
+           HERO - ENHANCED INVESTIGATION WALL
+        ============================================ */
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 60px;
+            perspective: 1000px;
+        }
+
+        .hero-wall {
+            position: relative;
+            width: 100%;
+            max-width: 1300px;
+            min-height: 85vh;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Hero main photo */
+        .hero-main {
+            position: relative;
+            width: 420px;
+            text-align: center;
+            z-index: 10;
+            animation: heroFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes heroFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .hero-photo {
+            width: 100%;
+            border: 10px solid var(--paper);
+            box-shadow: 8px 8px 30px rgba(0, 0, 0, 0.6);
+            transform: rotate(-2deg);
+            transition: transform 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-photo:hover {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 100;
+        }
+
+        .hero-photo img {
+            width: 100%;
+            display: block;
+        }
+
+        .hero-photo::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, transparent 40%, rgba(192, 57, 43, 0.05) 50%, transparent 60%);
+            animation: sheenMove 4s infinite;
+        }
+
+        @keyframes sheenMove {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .tape {
+            position: absolute;
+            width: 80px;
+            height: 25px;
+            background: var(--tape);
+            opacity: 0.8;
+            z-index: 5;
+        }
+
+        .tape-top {
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+        }
+
+        .tape-bottom {
+            bottom: -10px;
+            right: 20px;
+            transform: rotate(5deg);
+        }
+
+        .hero-name-card {
+            background: var(--paper);
+            padding: 18px 30px;
+            margin-top: 15px;
+            transform: rotate(1deg);
+            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.4);
+            position: relative;
+            border: 2px solid #ddd;
+        }
+
+        .hero-name-card::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: var(--spidey-red);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-name {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 2.4rem;
+            color: #1a1a1a;
+        }
+
+        .hero-subtitle {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* PINNED ITEMS - more creative floating */
+        .pinned-item {
+            position: absolute;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+        }
+
+        .pinned-item:hover {
+            z-index: 50 !important;
+            transform: scale(1.12) rotate(0deg) !important;
+        }
+
+        .pinned-note {
+            padding: 18px;
+            width: 175px;
+            min-height: 110px;
+            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            font-family: 'Permanent Marker', cursive;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            color: #333;
+            transition: transform 0.3s;
+        }
+
+        .pinned-note::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--spidey-red);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .pin-1 {
+            top: 3%;
+            left: 3%;
+            transform: rotate(-5deg);
+        }
+
+        .pin-2 {
+            top: 5%;
+            right: 5%;
+            transform: rotate(4deg);
+        }
+
+        .pin-3 {
+            bottom: 30%;
+            left: 1%;
+            transform: rotate(3deg);
+        }
+
+        .pin-4 {
+            bottom: 8%;
+            right: 3%;
+            transform: rotate(-3deg);
+        }
+
+        .pin-5 {
+            top: 38%;
+            left: -1%;
+            transform: rotate(-7deg);
+        }
+
+        .pin-6 {
+            top: 32%;
+            right: 0%;
+            transform: rotate(6deg);
+        }
+
+        .pin-7 {
+            top: 60%;
+            right: 4%;
+            transform: rotate(-4deg);
+        }
+
+        .pin-8 {
+            bottom: 15%;
+            left: 5%;
+            transform: rotate(5deg);
+        }
+
+        /* Photo pinned items */
+        .pinned-photo {
+            background: var(--paper);
+            padding: 8px 8px 20px;
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+
+        .pinned-photo img {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .pinned-photo::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            width: 50px;
+            height: 18px;
+            background: var(--tape);
+        }
+
+        .pinned-photo-caption {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.7rem;
+            color: #666;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        /* Red strings SVG */
+        .strings-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .red-string {
+            stroke: var(--string-red);
+            stroke-width: 1.5;
+            fill: none;
+            opacity: 0.5;
+            stroke-dasharray: 5, 3;
+            animation: stringGlow 3s infinite;
+        }
+
+        @keyframes stringGlow {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Typed text */
+        .hero-typed-wrap {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .hero-typed {
+            font-family: 'Special Elite', monospace;
+            font-size: 1.1rem;
+            color: var(--spidey-red);
+            text-shadow: 1px 1px 0 #000;
+            min-height: 30px;
+        }
+
+        .typed-cursor-spidey {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background: var(--spidey-red);
+            animation: cursorBlink 0.7s infinite;
+            vertical-align: text-bottom;
+            margin-left: 2px;
+        }
+
+        @keyframes cursorBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* Comic floating words */
+        .comic-float {
+            position: absolute;
+            font-family: 'Bangers', cursive;
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0.12;
+            animation: comicDrift 20s linear infinite;
+        }
+
+        @keyframes comicDrift {
+            0% {
+                transform: translateY(0) rotate(-5deg);
+                opacity: 0.12;
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+                opacity: 0.18;
+            }
+
+            100% {
+                transform: translateY(0) rotate(-5deg);
+                opacity: 0.12;
+            }
+        }
+
+        /* CTA buttons in hero */
+        .hero-cta {
+            position: absolute;
+            bottom: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .cta-btn {
+            padding: 12px 28px;
+            font-family: 'Bangers', cursive;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-primary {
+            background: var(--spidey-red);
+            color: white;
+            box-shadow: 4px 4px 0 var(--spidey-dark-red);
+        }
+
+        .cta-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--spidey-dark-red);
+        }
+
+        .cta-outline {
+            background: transparent;
+            color: var(--web-white);
+            border: 2px solid var(--web-white);
+        }
+
+        .cta-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           SECTION COMMON
+        ============================================ */
+        .board-section {
+            position: relative;
+            z-index: 2;
+            padding: 100px 30px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .section-header-board {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-stamp {
+            display: inline-block;
+            font-family: 'Bangers', cursive;
+            font-size: 2.5rem;
+            color: var(--spidey-red);
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+            letter-spacing: 3px;
+            position: relative;
+            transform: rotate(-2deg);
+            border: 3px solid var(--spidey-red);
+            padding: 10px 30px;
+            background: rgba(192, 57, 43, 0.05);
+        }
+
+        .section-stamp::before {
+            content: '🕸️';
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            font-size: 1.5rem;
+        }
+
+        .section-subtitle {
+            font-family: 'Special Elite', monospace;
+            font-size: 1rem;
+            color: #999;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        /* ============================================
+           ABOUT - Case File
+        ============================================ */
+        .about-board {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .case-file {
+            background: var(--paper);
+            padding: 30px;
+            position: relative;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.4);
+            transform: rotate(-1deg);
+        }
+
+        .case-file::before {
+            content: 'CLASSIFIED';
+            position: absolute;
+            top: 15px;
+            right: -10px;
+            font-family: 'Bangers', cursive;
+            font-size: 0.9rem;
+            color: white;
+            background: var(--spidey-red);
+            padding: 3px 15px;
+            transform: rotate(5deg);
+        }
+
+        .case-file-header {
+            text-align: center;
+            border-bottom: 2px dashed #999;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .case-file-header h3 {
+            font-family: 'Bangers', cursive;
+            font-size: 1.8rem;
+            color: #1a1a1a;
+            letter-spacing: 2px;
+        }
+
+        .case-file-header p {
+            font-family: 'Special Elite', monospace;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .case-avatar {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+            border: 4px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bangers', cursive;
+            font-size: 3.5rem;
+            color: var(--spidey-red);
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            overflow: hidden;
+        }
+
+        .case-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .case-details {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+            color: #444;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dotted #ccc;
+        }
+
+        .detail-label {
+            color: #888;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+        }
+
+        .detail-value {
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .about-notes {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .about-sticky {
+            padding: 25px;
+            position: relative;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+            font-family: 'Permanent Marker', cursive;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .about-sticky.yellow {
+            background: var(--sticky-yellow);
+            transform: rotate(1deg);
+        }
+
+        .about-sticky.pink {
+            background: var(--sticky-pink);
+            transform: rotate(-1deg);
+        }
+
+        .about-sticky.blue {
+            background: var(--sticky-blue);
+            transform: rotate(0.5deg);
+        }
+
+        .about-sticky::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 40%;
+            width: 60px;
+            height: 20px;
+            background: var(--tape);
+            transform: rotate(-2deg);
+        }
+
+        .stats-clippings {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .stat-clip {
+            background: var(--paper);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform: rotate(var(--rot, 0deg));
+        }
+
+        .stat-clip:nth-child(1) {
+            --rot: -2deg;
+        }
+
+        .stat-clip:nth-child(2) {
+            --rot: 1deg;
+        }
+
+        .stat-clip:nth-child(3) {
+            --rot: -1deg;
+        }
+
+        .stat-clip::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 10px;
+            background: var(--spidey-red);
+            border-radius: 50%;
+        }
+
+        .stat-clip-num {
+            font-family: 'Bangers', cursive;
+            font-size: 2rem;
+            color: var(--spidey-red);
+        }
+
+        .stat-clip-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        /* ============================================
+           SKILLS
+        ============================================ */
+        .skills-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .skill-note {
+            background: var(--paper);
+            padding: 25px;
+            position: relative;
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s;
+        }
+
+        .skill-note:nth-child(1) {
+            transform: rotate(-1.5deg);
+        }
+
+        .skill-note:nth-child(2) {
+            transform: rotate(1deg);
+        }
+
+        .skill-note:nth-child(3) {
+            transform: rotate(-0.5deg);
+        }
+
+        .skill-note:nth-child(4) {
+            transform: rotate(2deg);
+        }
+
+        .skill-note:hover {
+            transform: rotate(0deg) scale(1.03) translateY(-5px) !important;
+            box-shadow: 8px 8px 25px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .skill-note::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 20px;
+            background: var(--tape);
+        }
+
+        .skill-note-icon {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+        }
+
+        .skill-note-title {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1.1rem;
+            color: var(--spidey-dark-red);
+            margin-bottom: 15px;
+            border-bottom: 2px dashed #ddd;
+            padding-bottom: 8px;
+        }
+
+        .skill-row {
+            margin-bottom: 12px;
+        }
+
+        .skill-row-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .skill-row-name {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.85rem;
+            color: #444;
+        }
+
+        .skill-row-pct {
+            font-family: 'Bangers', cursive;
+            font-size: 0.85rem;
+            color: var(--spidey-red);
+        }
+
+        .skill-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: #e0d8c8;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .skill-bar-web {
+            height: 100%;
+            border-radius: 3px;
+            width: 0%;
+            background: repeating-linear-gradient(90deg, var(--spidey-red), var(--spidey-red) 4px, var(--spidey-dark-red) 4px, var(--spidey-dark-red) 8px);
+            transition: width 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* ============================================
+           PROJECTS
+        ============================================ */
+        .projects-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .project-polaroid {
+            background: var(--paper);
+            padding: 15px 15px 30px;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+        }
+
+        .project-polaroid:nth-child(1) {
+            transform: rotate(-3deg);
+        }
+
+        .project-polaroid:nth-child(2) {
+            transform: rotate(2deg);
+        }
+
+        .project-polaroid:nth-child(3) {
+            transform: rotate(-1deg);
+        }
+
+        .project-polaroid:hover {
+            transform: rotate(0deg) scale(1.05) translateY(-10px) !important;
+            box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 20;
+        }
+
+        .project-polaroid::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-3deg);
+            width: 80px;
+            height: 25px;
+            background: var(--tape);
+            z-index: 5;
+        }
+
+        .project-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-img.visa-bg {
+            background: linear-gradient(135deg, #1a237e, #283593);
+        }
+
+        .project-img.agent-bg {
+            background: linear-gradient(135deg, #b71c1c, #c62828);
+        }
+
+        .project-img.dam-bg {
+            background: linear-gradient(135deg, #004d40, #00695c);
+        }
+
+        .project-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-family: 'Bangers', cursive;
+            font-size: 0.8rem;
+            color: white;
+            background: var(--spidey-red);
+            padding: 3px 12px;
+            transform: rotate(-3deg);
+        }
+
+        .project-polaroid-body {
+            padding-top: 15px;
+        }
+
+        .project-polaroid-title {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1.2rem;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .project-polaroid-desc {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        .project-tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .tech-tag {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            background: rgba(192, 57, 43, 0.1);
+            border: 1px solid var(--spidey-red);
+            color: var(--spidey-dark-red);
+        }
+
+        .proj-link {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.8rem;
+            color: var(--spidey-red);
+            text-decoration: none;
+            padding: 5px 12px;
+            border: 1px solid var(--spidey-red);
+            transition: all 0.3s;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .proj-link:hover {
+            background: var(--spidey-red);
+            color: white;
+        }
+
+        /* ============================================
+           EXPERIENCE
+        ============================================ */
+        .experience-board {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .newspaper-clip {
+            background: var(--newspaper);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            border: 1px solid #ddd;
+        }
+
+        .newspaper-clip::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 30px;
+            width: 70px;
+            height: 20px;
+            background: var(--tape);
+        }
+
+        .newspaper-clip::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            right: 30px;
+            width: 50px;
+            height: 20px;
+            background: var(--tape);
+            transform: rotate(3deg);
+        }
+
+        .news-date {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.75rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .news-headline {
+            font-family: 'Bangers', cursive;
+            font-size: 1.6rem;
+            color: #1a1a1a;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .news-source {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+            color: var(--spidey-red);
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .news-body {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .news-body ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .news-body ul li {
+            padding-left: 20px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .news-body ul li::before {
+            content: '🕸️';
+            position: absolute;
+            left: 0;
+            font-size: 0.7rem;
+        }
+
+        /* Education */
+        .education-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .index-card {
+            background: var(--paper);
+            padding: 25px;
+            box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+            border-left: 4px solid var(--spidey-red);
+            background-image: repeating-linear-gradient(transparent, transparent 27px, #e0d8c8 27px, #e0d8c8 28px);
+        }
+
+        .index-card::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 15px;
+            background: var(--tape);
+        }
+
+        .index-card-icon {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .index-card-degree {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1rem;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .index-card-school {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+            color: var(--spidey-red);
+            margin-bottom: 5px;
+        }
+
+        .index-card-year {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        /* Achievements */
+        .achievements-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .achievement-pin {
+            background: var(--paper);
+            padding: 25px;
+            text-align: center;
+            box-shadow: 3px 3px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transition: all 0.4s;
+        }
+
+        .achievement-pin:hover {
+            transform: rotate(0deg) translateY(-8px) !important;
+            box-shadow: 8px 8px 25px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .achievement-pin::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: var(--spidey-red);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .achievement-pin-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .achievement-pin-text {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 0.95rem;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* Contact */
+        .contact-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .contact-letter {
+            background: var(--paper);
+            padding: 30px;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+            transform: rotate(-1deg);
+            background-image: repeating-linear-gradient(transparent, transparent 27px, #e0d8c8 27px, #e0d8c8 28px);
+        }
+
+        .contact-letter::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 30px;
+            width: 60px;
+            height: 20px;
+            background: var(--tape);
+        }
+
+        .contact-letter h3 {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1.5rem;
+            color: var(--spidey-dark-red);
+            margin-bottom: 15px;
+        }
+
+        .contact-letter p {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .contact-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .contact-detail-icon {
+            font-size: 1.3rem;
+        }
+
+        .contact-detail-text {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .contact-detail-label {
+            font-size: 0.7rem;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .contact-form-board {
+            background: var(--sticky-yellow);
+            padding: 30px;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.3);
+            transform: rotate(1deg);
+            position: relative;
+        }
+
+        .contact-form-board::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            right: 30px;
+            width: 60px;
+            height: 20px;
+            background: var(--tape);
+        }
+
+        .contact-form-board h3 {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-field {
+            margin-bottom: 15px;
+        }
+
+        .form-field label {
+            font-family: 'Special Elite', monospace;
+            font-size: 0.8rem;
+            color: #666;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-field input,
+        .form-field textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid #ccc;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.9rem;
+            color: #333;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-field input:focus,
+        .form-field textarea:focus {
+            border-color: var(--spidey-red);
+        }
+
+        .form-field textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn-spidey {
+            padding: 12px 30px;
+            background: var(--spidey-red);
+            color: white;
+            font-family: 'Bangers', cursive;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-spidey:hover {
+            background: var(--spidey-dark-red);
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(192, 57, 43, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px;
+            border-top: 2px dashed rgba(192, 57, 43, 0.3);
+        }
+
+        .footer-text {
+            font-family: 'Special Elite', monospace;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .footer-text .red {
+            color: var(--spidey-red);
+        }
+
+        /* ============================================
+           SECRET ADMIN PANEL (HIDDEN)
+        ============================================ */
+        .secret-admin {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.97);
+            z-index: 999999;
+            display: none;
+            overflow-y: auto;
+            backdrop-filter: blur(15px);
+        }
+
+        .secret-admin.active {
+            display: block;
+        }
+
+        /* Password Screen */
+        .pwd-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 9999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .pwd-screen.active {
+            display: flex;
+        }
+
+        .pwd-box {
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid var(--spidey-red);
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 520px;
+            width: 92%;
+        }
+
+        .pwd-box h3 {
+            font-family: 'Bangers', cursive;
+            font-size: 1.5rem;
+            color: var(--spidey-red);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .pwd-box input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(192, 57, 43, 0.4);
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            outline: none;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .pwd-box input:focus {
+            border-color: var(--spidey-red);
+        }
+
+        .pwd-enter {
+            padding: 10px 30px;
+            background: var(--spidey-red);
+            color: white;
+            font-family: 'Bangers', cursive;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .pwd-enter:hover {
+            background: var(--spidey-dark-red);
+        }
+
+        .pwd-cancel {
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: transparent;
+            color: #666;
+            border: 1px solid #444;
+            font-family: 'Special Elite', monospace;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .pwd-cancel:hover {
+            border-color: #888;
+            color: #aaa;
+        }
+
+        .pwd-error {
+            color: #e74c3c;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Admin Panel Content */
+        .admin-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .admin-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--spidey-red);
+            padding-bottom: 20px;
+        }
+
+        .admin-top h2 {
+            font-family: 'Bangers', cursive;
+            font-size: 1.8rem;
+            color: var(--spidey-red);
+            letter-spacing: 2px;
+        }
+
+        .admin-close-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(192, 57, 43, 0.1);
+            border: 2px solid var(--spidey-red);
+            color: var(--spidey-red);
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .admin-close-btn:hover {
+            background: var(--spidey-red);
+            color: white;
+        }
+
+        /* Section Tabs */
+        .admin-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(192, 57, 43, 0.2);
+            padding-bottom: 15px;
+        }
+
+        .admin-tab {
+            padding: 8px 18px;
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(192, 57, 43, 0.3);
+            color: #aaa;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+
+        .admin-tab:hover {
+            border-color: var(--spidey-red);
+            color: var(--spidey-red);
+        }
+
+        .admin-tab.active {
+            background: var(--spidey-red);
+            color: white;
+            border-color: var(--spidey-red);
+        }
+
+        .admin-panel-content {
+            display: none;
+        }
+
+        .admin-panel-content.active {
+            display: block;
+        }
+
+        .admin-block {
+            background: rgba(25, 25, 25, 0.9);
+            padding: 25px;
+            border: 1px solid rgba(192, 57, 43, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .admin-block h4 {
+            font-family: 'Bangers', cursive;
+            font-size: 1.1rem;
+            color: var(--spidey-red);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .admin-field {
+            margin-bottom: 14px;
+        }
+
+        .admin-field label {
+            display: block;
+            font-family: 'Special Elite', monospace;
+            font-size: 0.78rem;
+            color: #888;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .admin-field input,
+        .admin-field textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid rgba(192, 57, 43, 0.25);
+            color: #e0e0e0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.3s;
+            border-radius: 3px;
+        }
+
+        .admin-field input:focus,
+        .admin-field textarea:focus {
+            border-color: var(--spidey-red);
+        }
+
+        .admin-field textarea {
+            min-height: 70px;
+            resize: vertical;
+        }
+
+        /* Image Upload */
+        .img-upload-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 8px;
+        }
+
+        .img-upload-btn {
+            padding: 8px 16px;
+            background: rgba(192, 57, 43, 0.15);
+            border: 1px dashed var(--spidey-red);
+            color: var(--spidey-red);
+            font-family: 'Special Elite', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .img-upload-btn:hover {
+            background: rgba(192, 57, 43, 0.3);
+        }
+
+        .img-preview {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border: 1px solid rgba(192, 57, 43, 0.3);
+            display: none;
+        }
+
+        .img-preview.visible {
+            display: block;
+        }
+
+        /* Achievement rows */
+        .ach-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .ach-row input {
+            flex: 1;
+        }
+
+        .rm-btn {
+            padding: 8px 12px;
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .rm-btn:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .add-row-btn {
+            width: 100%;
+            padding: 10px;
+            background: rgba(192, 57, 43, 0.1);
+            border: 1px dashed var(--spidey-red);
+            color: var(--spidey-red);
+            font-family: 'Special Elite', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .add-row-btn:hover {
+            background: rgba(192, 57, 43, 0.2);
+        }
+
+        /* Save area */
+        .admin-save-area {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(192, 57, 43, 0.2);
+        }
+
+        .save-btn {
+            padding: 14px 40px;
+            background: var(--spidey-red);
+            color: white;
+            font-family: 'Bangers', cursive;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .save-btn:hover {
+            background: var(--spidey-dark-red);
+            transform: translateY(-2px);
+        }
+
+        .reset-btn {
+            padding: 14px 40px;
+            background: transparent;
+            color: #e74c3c;
+            font-family: 'Bangers', cursive;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            border: 1px solid #e74c3c;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reset-btn:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .pwd-change-btn {
+            padding: 14px 30px;
+            background: transparent;
+            color: #f39c12;
+            font-family: 'Bangers', cursive;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            border: 1px solid #f39c12;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pwd-change-btn:hover {
+            background: #f39c12;
+            color: #000;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 28px;
+            background: rgba(192, 57, 43, 0.9);
+            border: 1px solid var(--spidey-red);
+            color: white;
+            font-family: 'Bangers', cursive;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            z-index: 9999999;
+            border-radius: 4px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Mask-on mode */
+        body.mask-on .wall-bg {
+            background: linear-gradient(rgba(139, 0, 0, 0.12), rgba(26, 35, 126, 0.12)),
+                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+                repeating-linear-gradient(0deg, transparent, transparent 48px, #111 48px, #111 50px),
+                repeating-linear-gradient(90deg, transparent, transparent 98px, #111 98px, #111 100px);
+            background-color: #1a1a2e;
+        }
+
+        body.mask-on .web-overlay {
+            opacity: 0.06;
+        }
+
+        body.mask-on .red-string {
+            opacity: 0.9;
+            stroke-width: 2;
+            filter: drop-shadow(0 0 3px rgba(231, 76, 60, 0.5));
+        }
+
+        body.mask-on .hero-main {
+            animation: heroFloat 6s ease-in-out infinite, spiderSense 4s infinite;
+        }
+
+        @keyframes spiderSense {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 0px transparent);
+            }
+
+            50% {
+                filter: drop-shadow(0 0 15px rgba(192, 57, 43, 0.3));
+            }
+        }
+
+        /* Reveal */
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Click ripple */
+        .click-ripple {
+            position: fixed;
+            pointer-events: none;
+            z-index: 99996;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid var(--spidey-red);
+            animation: clickRip 0.6s ease-out forwards;
+        }
+
+        @keyframes clickRip {
+            0% {
+                width: 10px;
+                height: 10px;
+                opacity: 1;
+                margin: -5px 0 0 -5px;
+            }
+
+            100% {
+                width: 80px;
+                height: 80px;
+                opacity: 0;
+                margin: -40px 0 0 -40px;
+            }
+        }
+
+        /* ============================================
+           WEB SHOOTER BUTTON ANIMATION
+        ============================================ */
+        .web-shoot-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99990;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .web-strand {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            transform-origin: left center;
+            border-radius: 1px;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+        }
+
+        .web-splat {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%);
+            transform: translate(-50%, -50%);
+            animation: splatGrow 0.5s ease-out forwards;
+        }
+
+        @keyframes splatGrow {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+
+            100% {
+                width: 120px;
+                height: 120px;
+                opacity: 0;
+            }
+        }
+
+        .web-impact-ring {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: impactRing 0.6s ease-out forwards;
+        }
+
+        @keyframes impactRing {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+                border-width: 3px;
+            }
+
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+                border-width: 1px;
+            }
+        }
+
+        .web-pull-effect {
+            position: fixed;
+            inset: 0;
+            z-index: 99989;
+            background: radial-gradient(circle at var(--cx, 50%) var(--cy, 50%), transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+            opacity: 0;
+            animation: webPull 0.8s ease-in forwards;
+            pointer-events: none;
+        }
+
+        @keyframes webPull {
+            0% {
+                opacity: 0;
+            }
+
+            40% {
+                opacity: 0.6;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .web-button-flash {
+            position: absolute;
+            inset: -4px;
+            border: 2px solid white;
+            border-radius: 4px;
+            opacity: 0;
+            animation: btnFlash 0.3s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes btnFlash {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1.3);
+            }
+        }
+
+        /* Password screen fix */
+        .pwd-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 9999999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .pwd-screen.active {
+            display: flex !important;
+        }
+
+        .pwd-box {
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid var(--spidey-red);
+            padding: 40px 50px;
+            text-align: center;
+            max-width: 520px;
+            width: 92%;
+        }
+
+        .pwd-box input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(192, 57, 43, 0.4);
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            outline: none;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .about-board,
+            .contact-board {
+                grid-template-columns: 1fr;
+            }
+
+            .projects-board {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-main {
+                width: 90%;
+                max-width: 350px;
+            }
+
+            .pinned-item {
+                display: none;
+            }
+
+            .stats-clippings {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .mask-toggle {
+                width: 55px;
+                height: 55px;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .admin-tabs {
+                gap: 3px;
+            }
+
+            .admin-tab {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading -->
+    <div class="loader-screen" id="loaderScreen">
+        <svg class="web-loader" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#c0392b" stroke-width="1" opacity="0.3" />
+            <circle cx="50" cy="50" r="30" fill="none" stroke="#c0392b" stroke-width="1" opacity="0.3" />
+            <circle cx="50" cy="50" r="15" fill="none" stroke="#c0392b" stroke-width="1" opacity="0.3" />
+            <line x1="50" y1="5" x2="50" y2="95" stroke="#c0392b" stroke-width="0.5" opacity="0.5" />
+            <line x1="5" y1="50" x2="95" y2="50" stroke="#c0392b" stroke-width="0.5" opacity="0.5" />
+            <line x1="15" y1="15" x2="85" y2="85" stroke="#c0392b" stroke-width="0.5" opacity="0.5" />
+            <line x1="85" y1="15" x2="15" y2="85" stroke="#c0392b" stroke-width="0.5" opacity="0.5" />
+            <circle cx="50" cy="50" r="3" fill="#c0392b">
+                <animate attributeName="r" values="3;5;3" dur="1s" repeatCount="indefinite" />
+            </circle>
+        </svg>
+        <div class="loader-text">SPINNING THE WEB...</div>
+    </div>
+
+    <!-- Bg -->
+    <div class="wall-bg"></div>
+    <div class="web-overlay"></div>
+
+    <!-- Spider Crawl -->
+    <div class="spider-crawl" id="spiderCrawl">🕷️</div>
+
+    <!-- Mask Toggle -->
+    <div class="mask-toggle" id="maskToggle" title="Toggle Spider-Sense">
+        <img src="mask.png" alt="Mask" id="maskImg">
+        <span class="mask-label">MASK ON/OFF</span>
+    </div>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <div class="nav-logo" id="navLogo"><span>🕸️</span> <span id="navLogoText">ABHINAV.V</span></div>
+        <ul class="nav-links">
+            <li><a href="#hero">Wall</a></li>
+            <li><a href="#about">Case File</a></li>
+            <li><a href="#skills">Powers</a></li>
+            <li><a href="#projects">Missions</a></li>
+            <li><a href="#experience">Clippings</a></li>
+            <li><a href="#contact">Signal</a></li>
+        </ul>
+    </nav>
+
+    <!-- =================== HERO =================== -->
+    <section class="hero" id="hero">
+        <div class="hero-wall" id="heroWall">
+            <!-- Comic floating words -->
+            <div class="comic-float"
+                style="top:10%;left:8%;font-size:4rem;color:rgba(192,57,43,0.08);animation-delay:-5s;">THWIP!</div>
+            <div class="comic-float"
+                style="top:50%;right:5%;font-size:3rem;color:rgba(26,35,126,0.08);animation-delay:-12s;">POW!</div>
+            <div class="comic-float"
+                style="bottom:20%;left:15%;font-size:2.5rem;color:rgba(192,57,43,0.06);animation-delay:-8s;">ZAP!</div>
+            <div class="comic-float"
+                style="top:70%;right:15%;font-size:3.5rem;color:rgba(26,35,126,0.06);animation-delay:-15s;">WEB!</div>
+
+            <!-- Red Strings -->
+            <svg class="strings-svg">
+                <line class="red-string" x1="18%" y1="18%" x2="44%" y2="45%" />
+                <line class="red-string" x1="82%" y1="12%" x2="56%" y2="45%" />
+                <line class="red-string" x1="12%" y1="68%" x2="44%" y2="55%" />
+                <line class="red-string" x1="88%" y1="72%" x2="56%" y2="55%" />
+                <line class="red-string" x1="8%" y1="42%" x2="40%" y2="48%" />
+                <line class="red-string" x1="92%" y1="38%" x2="60%" y2="48%" />
+                <line class="red-string" x1="15%" y1="85%" x2="45%" y2="60%" />
+                <line class="red-string" x1="85%" y1="62%" x2="58%" y2="52%" />
+            </svg>
+
+            <!-- Pinned Notes -->
+            <div class="pinned-item pin-1">
+                <div class="pinned-note" style="background:var(--sticky-yellow);" id="pin1">
+                    Python 🐍<br>FastAPI ⚡<br>TensorFlow 🧠
+                </div>
+            </div>
+            <div class="pinned-item pin-2">
+                <div class="pinned-note" style="background:var(--sticky-pink);" id="pin2">
+                    LangChain 🔗<br>LangGraph 🕸️<br>n8n Automation
+                </div>
+            </div>
+            <div class="pinned-item pin-3">
+                <div class="pinned-note" style="background:var(--sticky-blue);" id="pin3">
+                    "With great code<br>comes great<br>responsibility" 🕸️
+                </div>
+            </div>
+            <div class="pinned-item pin-4">
+                <div class="pinned-note" style="background:var(--sticky-green);" id="pin4">
+                    B.Tech CS 🎓<br>MIT - AKTU<br>Expected 2027
+                </div>
+            </div>
+            <div class="pinned-item pin-5">
+                <div class="pinned-note" style="background:var(--sticky-yellow);" id="pin5">
+                    ML Intern @<br>Adgama Digital<br>Gurugram 🏢
+                </div>
+            </div>
+            <div class="pinned-item pin-6">
+                <div class="pinned-note" style="background:var(--sticky-pink);" id="pin6">
+                    Groq LLM 🚀<br>OpenCV 👁️<br>Generative AI
+                </div>
+            </div>
+            <div class="pinned-item pin-7">
+                <div class="pinned-note" style="background:var(--sticky-green);" id="pin7">
+                    CNN Models 🧬<br>Data Pipelines<br>Production AI
+                </div>
+            </div>
+            <div class="pinned-item pin-8">
+                <div class="pinned-note" style="background:var(--sticky-blue);" id="pin8">
+                    🕸️ Git/GitHub<br>📊 Visualization<br>📱 WhatsApp API
+                </div>
+            </div>
+
+            <!-- Main Hero -->
+            <div class="hero-main">
+                <div class="hero-photo">
+                    <div class="tape tape-top"></div>
+                    <img src="spidey-hero.png" alt="Evidence Wall" id="heroImg">
+                    <div class="tape tape-bottom"></div>
+                </div>
+                <div class="hero-name-card">
+                    <div class="hero-name" id="heroName">ABHINAV VARSHNEY</div>
+                    <div class="hero-subtitle" id="heroSubtitle">AI/ML Engineer • Web Slinger • Code Avenger</div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="hero-cta">
+                <button class="cta-btn cta-primary" id="btnMissions" onclick="webShootTo(this, '#projects')">VIEW
+                    MISSIONS</button>
+                <button class="cta-btn cta-outline" id="btnSignal" onclick="webShootTo(this, '#contact')">SEND
+                    SIGNAL</button>
+            </div>
+
+            <!-- Typed -->
+            <div class="hero-typed-wrap">
+                <div class="hero-typed"><span id="typedOutput"></span><span class="typed-cursor-spidey">|</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =================== ABOUT =================== -->
+    <section class="board-section" id="about">
+        <div class="section-header-board reveal-item">
+            <div class="section-stamp">CASE FILE #001</div>
+            <p class="section-subtitle" id="aboutSub">// The identity behind the mask</p>
+        </div>
+        <div class="about-board">
+            <div class="case-file reveal-item">
+                <div class="case-file-header">
+                    <h3>SUBJECT PROFILE</h3>
+                    <p>File: AV-2026-MIT</p>
+                </div>
+                <div class="case-avatar"><img src="unmask.png" alt="Avatar" id="avatarImg"></div>
+                <div class="case-details">
+                    <div class="detail-row"><span class="detail-label">Alias:</span><span class="detail-value"
+                            id="caseAlias">The Web Developer</span></div>
+                    <div class="detail-row"><span class="detail-label">Role:</span><span class="detail-value"
+                            id="caseRole">AI/ML Engineer</span></div>
+                    <div class="detail-row"><span class="detail-label">Base:</span><span class="detail-value"
+                            id="caseBase">Chandausi, UP</span></div>
+                    <div class="detail-row"><span class="detail-label">Status:</span><span class="detail-value"
+                            style="color:#27ae60;">🟢 Active & Available</span></div>
+                    <div class="detail-row"><span class="detail-label">Threat Level:</span><span class="detail-value"
+                            style="color:var(--spidey-red);">MAXIMUM CREATIVITY</span></div>
+                </div>
+            </div>
+            <div class="about-notes">
+                <div class="about-sticky yellow reveal-item" id="aboutDesc1">Aspiring AI/ML Engineer with hands-on
+                    experience building intelligent automation systems, Generative AI applications, and data pipelines.
+                    Proficient in designing agentic workflows using LangChain and LangGraph.</div>
+                <div class="about-sticky pink reveal-item" id="aboutDesc2">Developing scalable backend APIs with
+                    FastAPI/Flask, and training deep learning models. Passionate about solving complex real-world
+                    problems through innovative, production-ready AI solutions. 🕸️</div>
+                <div class="about-sticky blue reveal-item" id="aboutDesc3">Selected and active participant in the
+                    University's Core Technical Mentorship Program. B.Tech in Computer Science at Moradabad Institute of
+                    Technology (AKTU).</div>
+                <div class="stats-clippings reveal-item">
+                    <div class="stat-clip">
+                        <div class="stat-clip-num" id="statP">3+</div>
+                        <div class="stat-clip-label">Missions</div>
+                    </div>
+                    <div class="stat-clip">
+                        <div class="stat-clip-num" id="statT">10+</div>
+                        <div class="stat-clip-label">Web Powers</div>
+                    </div>
+                    <div class="stat-clip">
+                        <div class="stat-clip-num" id="statE">1+</div>
+                        <div class="stat-clip-label">Internships</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =================== SKILLS =================== -->
+    <section class="board-section" id="skills">
+        <div class="section-header-board reveal-item">
+            <div class="section-stamp">SPIDER POWERS</div>
+            <p class="section-subtitle">// The arsenal of abilities</p>
+        </div>
+        <div class="skills-board">
+            <div class="skill-note reveal-item">
+                <div class="skill-note-icon">💻</div>
+                <div class="skill-note-title">Languages & Frameworks</div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">Python</span><span
+                            class="skill-row-pct">92%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="92"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">FastAPI</span><span
+                            class="skill-row-pct">88%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="88"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">Flask</span><span
+                            class="skill-row-pct">85%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="85"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">Streamlit</span><span
+                            class="skill-row-pct">82%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="82"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skill-note reveal-item">
+                <div class="skill-note-icon">🧠</div>
+                <div class="skill-note-title">AI & Machine Learning</div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">Deep Learning / CNNs</span><span
+                            class="skill-row-pct">90%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="90"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">TensorFlow</span><span
+                            class="skill-row-pct">87%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="87"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">OpenCV</span><span
+                            class="skill-row-pct">85%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="85"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">Generative AI / LLMs</span><span
+                            class="skill-row-pct">88%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="88"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skill-note reveal-item">
+                <div class="skill-note-icon">🕸️</div>
+                <div class="skill-note-title">Agentic AI & Automation</div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">LangChain</span><span
+                            class="skill-row-pct">90%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="90"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">LangGraph</span><span
+                            class="skill-row-pct">85%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="85"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">n8n Automation</span><span
+                            class="skill-row-pct">82%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="82"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">LlamaParse</span><span
+                            class="skill-row-pct">80%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="80"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="skill-note reveal-item">
+                <div class="skill-note-icon">🛠️</div>
+                <div class="skill-note-title">Tools & Engineering</div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">Data Preprocessing</span><span
+                            class="skill-row-pct">90%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="90"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">Data Visualization</span><span
+                            class="skill-row-pct">85%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="85"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">Git / GitHub</span><span
+                            class="skill-row-pct">88%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="88"></div>
+                    </div>
+                </div>
+                <div class="skill-row">
+                    <div class="skill-row-header"><span class="skill-row-name">WhatsApp API</span><span
+                            class="skill-row-pct">78%</span></div>
+                    <div class="skill-bar-bg">
+                        <div class="skill-bar-web" data-w="78"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =================== PROJECTS =================== -->
+    <section class="board-section" id="projects">
+        <div class="section-header-board reveal-item">
+            <div class="section-stamp">MISSION FILES</div>
+            <p class="section-subtitle">// Completed operations & evidence</p>
+        </div>
+        <div class="projects-board">
+            <div class="project-polaroid reveal-item">
+                <div class="project-img visa-bg">🌐<div class="project-badge">AUTOMATION</div>
+                </div>
+                <div class="project-polaroid-body">
+                    <h3 class="project-polaroid-title" id="proj1T">AI Visa Processing Automation System</h3>
+                    <p class="project-polaroid-desc" id="proj1D">Designed an end-to-end intelligent automation pipeline
+                        using n8n and Twilio to streamline client document collection. Integrated Groq LLM and
+                        LlamaParse to automate complex unstructured information extraction and multi-step agentic case
+                        management.</p>
+                    <div class="project-tech-tags"><span class="tech-tag">n8n</span><span
+                            class="tech-tag">Twilio</span><span class="tech-tag">Groq LLM</span><span
+                            class="tech-tag">LlamaParse</span><span class="tech-tag">Google Sheets</span></div>
+                    <div><a href="#" class="proj-link">GitHub →</a><a href="#" class="proj-link">Demo →</a></div>
+                </div>
+            </div>
+            <div class="project-polaroid reveal-item">
+                <div class="project-img agent-bg">🤖<div class="project-badge">AGENTIC AI</div>
+                </div>
+                <div class="project-polaroid-body">
+                    <h3 class="project-polaroid-title" id="proj2T">Agentic AI Assistant</h3>
+                    <p class="project-polaroid-desc" id="proj2D">Built an advanced conversational AI assistant
+                        leveraging LangChain and LangGraph to enable multi-agent coordination and contextual reasoning.
+                        Responsive backend using FastAPI with persistent memory-based user interactions.</p>
+                    <div class="project-tech-tags"><span class="tech-tag">LangChain</span><span
+                            class="tech-tag">LangGraph</span><span class="tech-tag">FastAPI</span><span
+                            class="tech-tag">Groq LLM</span><span class="tech-tag">Streamlit</span></div>
+                    <div><a href="#" class="proj-link">GitHub →</a><a href="#" class="proj-link">Demo →</a></div>
+                </div>
+            </div>
+            <div class="project-polaroid reveal-item">
+                <div class="project-img dam-bg">🔍<div class="project-badge">COMPUTER VISION</div>
+                </div>
+                <div class="project-polaroid-body">
+                    <h3 class="project-polaroid-title" id="proj3T">Underwater Dam Crack Detection</h3>
+                    <p class="project-polaroid-desc" id="proj3D">Implemented a specialized deep learning model using
+                        TensorFlow and CNNs for high-precision structural anomaly detection. Built a synthetic data
+                        generation framework using OpenCV to simulate turbid underwater conditions.</p>
+                    <div class="project-tech-tags"><span class="tech-tag">TensorFlow</span><span
+                            class="tech-tag">CNNs</span><span class="tech-tag">OpenCV</span><span class="tech-tag">Deep
+                            Learning</span><span class="tech-tag">Python</span></div>
+                    <div><a href="#" class="proj-link">GitHub →</a><a href="#" class="proj-link">Details →</a></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =================== EXPERIENCE =================== -->
+    <section class="board-section" id="experience">
+        <div class="section-header-board reveal-item">
+            <div class="section-stamp">NEWSPAPER CLIPPINGS</div>
+            <p class="section-subtitle">// Reports from the field</p>
+        </div>
+        <div class="experience-board">
+            <div class="newspaper-clip reveal-item">
+                <div class="news-date" id="expDate">MAR 2026 – JUN 2026</div>
+                <div class="news-headline" id="expTitle">Machine Learning Intern Joins Adgama Digital</div>
+                <div class="news-source" id="expCompany">Adgama Digital – Gurugram, India</div>
+                <div class="news-body">
+                    <ul>
+                        <li>Architected robust data preprocessing and feature engineering pipelines to cleanse, scale,
+                            and transform high-dimensional datasets for predictive models.</li>
+                        <li>Collaborated on building and training machine learning algorithms for production-level
+                            analytics, substantially enhancing model prediction accuracy.</li>
+                        <li>Drafted thorough technical documentation outlining system architecture changes and presented
+                            analytical metrics to engineering leads.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="section-header-board reveal-item" style="margin-top:80px;">
+            <div class="section-stamp">EDUCATION RECORDS</div>
+            <p class="section-subtitle">// Academic background files</p>
+        </div>
+        <div class="education-board">
+            <div class="index-card reveal-item">
+                <div class="index-card-icon">🎓</div>
+                <div class="index-card-degree" id="edu1Deg">Bachelor of Technology (B.Tech) in Computer Science</div>
+                <div class="index-card-school" id="edu1Sch">Moradabad Institute of Technology (MIT) – AKTU</div>
+                <div class="index-card-year" id="edu1Yr">Expected: 2027</div>
+            </div>
+            <div class="index-card reveal-item">
+                <div class="index-card-icon">📚</div>
+                <div class="index-card-degree" id="edu2Deg">Jr. High School Diploma – Computer Science Focus</div>
+                <div class="index-card-school" id="edu2Sch">Sacred Heart Convent School – Chandausi, UP</div>
+                <div class="index-card-year" id="edu2Yr">Completed: 2022</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =================== ACHIEVEMENTS =================== -->
+    <section class="board-section" id="achievements">
+        <div class="section-header-board reveal-item">
+            <div class="section-stamp">ACHIEVEMENTS BOARD</div>
+            <p class="section-subtitle">// Pinned milestones</p>
+        </div>
+        <div class="achievements-board" id="achievementsBoard">
+            <div class="achievement-pin reveal-item" style="transform:rotate(-2deg)">
+                <div class="achievement-pin-icon">🏆</div>
+                <div class="achievement-pin-text">Core Technical Mentorship Program – Active Participant</div>
+            </div>
+            <div class="achievement-pin reveal-item" style="transform:rotate(1.5deg)">
+                <div class="achievement-pin-icon">🚀</div>
+                <div class="achievement-pin-text">Hackathon Project – Agentic AI Assistant</div>
+            </div>
+            <div class="achievement-pin reveal-item" style="transform:rotate(-1deg)">
+                <div class="achievement-pin-icon">💡</div>
+                <div class="achievement-pin-text">Production-ready AI Solutions for Real-world Problems</div>
+            </div>
+            <div class="achievement-pin reveal-item" style="transform:rotate(2deg)">
+                <div class="achievement-pin-icon">🎯</div>
+                <div class="achievement-pin-text">ML Internship at Adgama Digital, Gurugram</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =================== CONTACT =================== -->
+    <section class="board-section" id="contact">
+        <div class="section-header-board reveal-item">
+            <div class="section-stamp">SPIDER SIGNAL</div>
+            <p class="section-subtitle">// Light the signal to reach me</p>
+        </div>
+        <div class="contact-board">
+            <div class="contact-letter reveal-item">
+                <h3>Let's Team Up! 🕸️</h3>
+                <p>I'm always excited to collaborate on AI/ML missions, discuss new opportunities, or just have a
+                    conversation about cutting-edge technology. Send a signal my way!</p>
+                <div class="contact-detail-item"><span class="contact-detail-icon">📧</span>
+                    <div>
+                        <div class="contact-detail-label">Email</div>
+                        <div class="contact-detail-text" id="cEmail">abhinavvarshney3005@gmail.com</div>
+                    </div>
+                </div>
+                <div class="contact-detail-item"><span class="contact-detail-icon">📱</span>
+                    <div>
+                        <div class="contact-detail-label">Phone</div>
+                        <div class="contact-detail-text" id="cPhone">+91 9528775774</div>
+                    </div>
+                </div>
+                <div class="contact-detail-item"><span class="contact-detail-icon">📍</span>
+                    <div>
+                        <div class="contact-detail-label">Location</div>
+                        <div class="contact-detail-text" id="cLoc">Chandausi, Uttar Pradesh, India</div>
+                    </div>
+                </div>
+                <div class="contact-detail-item"><span class="contact-detail-icon">💻</span>
+                    <div>
+                        <div class="contact-detail-label">GitHub</div>
+                        <div class="contact-detail-text" id="cGithub">github.com/abhinavvarshney</div>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form-board reveal-item">
+                <h3>Send a Web Message ✉️</h3>
+                <form id="contactForm">
+                    <div class="form-field"><label>Your Name</label><input type="text" placeholder="Peter Parker..."
+                            required></div>
+                    <div class="form-field"><label>Your Email</label><input type="email"
+                            placeholder="hero@dailybugle.com" required></div>
+                    <div class="form-field"><label>Mission Brief</label><input type="text"
+                            placeholder="Project Collaboration"></div>
+                    <div class="form-field"><label>Message</label><textarea
+                            placeholder="Describe your mission..."></textarea></div>
+                    <button type="submit" class="btn-spidey">SHOOT WEB → 🕸️</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p class="footer-text">Designed & Built with 🕸️ by <span class="red">Abhinav Varshney</span> • <span
+                id="footerY">2026</span> • "With great code comes great responsibility"</p>
+    </footer>
+
+    <!-- =================== PASSWORD SCREEN =================== -->
+    <div class="pwd-screen" id="pwdScreen">
+        <div class="pwd-box">
+            <h3>🕷️ SPIDER VAULT</h3>
+            <p style="font-family:'Special Elite',monospace;color:#666;font-size:0.8rem;margin-bottom:20px;">Enter
+                access code to continue</p>
+            <input type="password" id="pwdInput" placeholder="Enter access code" autocomplete="off">
+            <button class="pwd-enter" id="pwdEnter">UNLOCK</button>
+            <button class="pwd-cancel" id="pwdCancel">Cancel</button>
+            <div class="pwd-error" id="pwdError">⚠️ Access Denied! Wrong code.</div>
+        </div>
+    </div>
+
+    <!-- =================== SECRET ADMIN PANEL =================== -->
+    <div class="secret-admin" id="secretAdmin">
+        <div class="admin-container">
+            <div class="admin-top">
+                <h2>🕷️ SPIDER CONTROL CENTER</h2>
+                <button class="admin-close-btn" id="adminCloseBtn">✕</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="admin-tabs" id="adminTabs">
+                <button class="admin-tab active" data-tab="tabHero">🏠 Hero</button>
+                <button class="admin-tab" data-tab="tabAbout">👤 About</button>
+                <button class="admin-tab" data-tab="tabSkills">⚡ Skills</button>
+                <button class="admin-tab" data-tab="tabProjects">🚀 Projects</button>
+                <button class="admin-tab" data-tab="tabExp">💼 Experience</button>
+                <button class="admin-tab" data-tab="tabEdu">🎓 Education</button>
+                <button class="admin-tab" data-tab="tabAch">🏆 Achievements</button>
+                <button class="admin-tab" data-tab="tabContact">📬 Contact</button>
+                <button class="admin-tab" data-tab="tabImages">🖼️ Images</button>
+                <button class="admin-tab" data-tab="tabSettings">⚙ Settings</button>
+            </div>
+
+            <!-- HERO TAB -->
+            <div class="admin-panel-content active" id="tabHero">
+                <div class="admin-block">
+                    <h4>Hero Section</h4>
+                    <div class="admin-field"><label>Name (Big Text)</label><input type="text" id="aName"
+                            value="ABHINAV VARSHNEY"></div>
+                    <div class="admin-field"><label>Subtitle</label><input type="text" id="aSubtitle"
+                            value="AI/ML Engineer • Web Slinger • Code Avenger"></div>
+                </div>
+                <div class="admin-block">
+                    <h4>Pinned Sticky Notes (Hero Wall)</h4>
+                    <div class="admin-field"><label>Note 1 (Top Left)</label><textarea
+                            id="aPin1">Python 🐍&#10;FastAPI ⚡&#10;TensorFlow 🧠</textarea></div>
+                    <div class="admin-field"><label>Note 2 (Top Right)</label><textarea
+                            id="aPin2">LangChain 🔗&#10;LangGraph 🕸️&#10;n8n Automation</textarea></div>
+                    <div class="admin-field"><label>Note 3 (Mid Left)</label><textarea
+                            id="aPin3">"With great code&#10;comes great&#10;responsibility" 🕸️</textarea></div>
+                    <div class="admin-field"><label>Note 4 (Bottom Right)</label><textarea
+                            id="aPin4">B.Tech CS 🎓&#10;MIT - AKTU&#10;Expected 2027</textarea></div>
+                    <div class="admin-field"><label>Note 5 (Center Left)</label><textarea
+                            id="aPin5">ML Intern @&#10;Adgama Digital&#10;Gurugram 🏢</textarea></div>
+                    <div class="admin-field"><label>Note 6 (Center Right)</label><textarea
+                            id="aPin6">Groq LLM 🚀&#10;OpenCV 👁️&#10;Generative AI</textarea></div>
+                    <div class="admin-field"><label>Note 7 (Lower Right)</label><textarea
+                            id="aPin7">CNN Models 🧬&#10;Data Pipelines&#10;Production AI</textarea></div>
+                    <div class="admin-field"><label>Note 8 (Lower Left)</label><textarea
+                            id="aPin8">🕸️ Git/GitHub&#10;📊 Visualization&#10;📱 WhatsApp API</textarea></div>
+                </div>
+            </div>
+
+            <!-- ABOUT TAB -->
+            <div class="admin-panel-content" id="tabAbout">
+                <div class="admin-block">
+                    <h4>Case File Details</h4>
+                    <div class="admin-field"><label>Alias</label><input type="text" id="aAlias"
+                            value="The Web Developer"></div>
+                    <div class="admin-field"><label>Role</label><input type="text" id="aRole" value="AI/ML Engineer">
+                    </div>
+                    <div class="admin-field"><label>Base Location</label><input type="text" id="aBase"
+                            value="Chandausi, UP"></div>
+                </div>
+                <div class="admin-block">
+                    <h4>Sticky Note Descriptions</h4>
+                    <div class="admin-field"><label>Note 1 (Yellow)</label><textarea
+                            id="aDesc1">Aspiring AI/ML Engineer with hands-on experience building intelligent automation systems, Generative AI applications, and data pipelines. Proficient in designing agentic workflows using LangChain and LangGraph.</textarea>
+                    </div>
+                    <div class="admin-field"><label>Note 2 (Pink)</label><textarea
+                            id="aDesc2">Developing scalable backend APIs with FastAPI/Flask, and training deep learning models. Passionate about solving complex real-world problems through innovative, production-ready AI solutions. 🕸️</textarea>
+                    </div>
+                    <div class="admin-field"><label>Note 3 (Blue)</label><textarea
+                            id="aDesc3">Selected and active participant in the University's Core Technical Mentorship Program. B.Tech in Computer Science at Moradabad Institute of Technology (AKTU).</textarea>
+                    </div>
+                </div>
+                <div class="admin-block">
+                    <h4>Stats</h4>
+                    <div class="admin-field"><label>Projects Count</label><input type="text" id="aStatP" value="3+">
+                    </div>
+                    <div class="admin-field"><label>Technologies Count</label><input type="text" id="aStatT"
+                            value="10+"></div>
+                    <div class="admin-field"><label>Experience Count</label><input type="text" id="aStatE" value="1+">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SKILLS TAB -->
+            <div class="admin-panel-content" id="tabSkills">
+                <div class="admin-block">
+                    <h4>Skills (Edit the skill names & percentages directly in the HTML source for full control)</h4>
+                    <p style="color:#888;font-size:0.85rem;font-family:'Special Elite',monospace;">Tip: Skill bars and
+                        names are set in the HTML. Use the Projects/About tabs to update text content. For adding new
+                        skills, edit the source HTML directly.</p>
+                </div>
+            </div>
+
+            <!-- PROJECTS TAB -->
+            <div class="admin-panel-content" id="tabProjects">
+                <div class="admin-block">
+                    <h4>Project 1 - Automation</h4>
+                    <div class="admin-field"><label>Title</label><input type="text" id="aP1T"
+                            value="AI Visa Processing Automation System"></div>
+                    <div class="admin-field"><label>Description</label><textarea
+                            id="aP1D">Designed an end-to-end intelligent automation pipeline using n8n and Twilio to streamline client document collection. Integrated Groq LLM and LlamaParse to automate complex unstructured information extraction and multi-step agentic case management.</textarea>
+                    </div>
+                </div>
+                <div class="admin-block">
+                    <h4>Project 2 - Agentic AI</h4>
+                    <div class="admin-field"><label>Title</label><input type="text" id="aP2T"
+                            value="Agentic AI Assistant"></div>
+                    <div class="admin-field"><label>Description</label><textarea
+                            id="aP2D">Built an advanced conversational AI assistant leveraging LangChain and LangGraph to enable multi-agent coordination and contextual reasoning. Responsive backend using FastAPI with persistent memory-based user interactions.</textarea>
+                    </div>
+                </div>
+                <div class="admin-block">
+                    <h4>Project 3 - Computer Vision</h4>
+                    <div class="admin-field"><label>Title</label><input type="text" id="aP3T"
+                            value="Underwater Dam Crack Detection"></div>
+                    <div class="admin-field"><label>Description</label><textarea
+                            id="aP3D">Implemented a specialized deep learning model using TensorFlow and CNNs for high-precision structural anomaly detection. Built a synthetic data generation framework using OpenCV to simulate turbid underwater conditions.</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EXPERIENCE TAB -->
+            <div class="admin-panel-content" id="tabExp">
+                <div class="admin-block">
+                    <h4>Work Experience</h4>
+                    <div class="admin-field"><label>Date Range</label><input type="text" id="aExpDate"
+                            value="MAR 2026 – JUN 2026"></div>
+                    <div class="admin-field"><label>Headline</label><input type="text" id="aExpTitle"
+                            value="Machine Learning Intern Joins Adgama Digital"></div>
+                    <div class="admin-field"><label>Company</label><input type="text" id="aExpComp"
+                            value="Adgama Digital – Gurugram, India"></div>
+                </div>
+            </div>
+
+            <!-- EDUCATION TAB -->
+            <div class="admin-panel-content" id="tabEdu">
+                <div class="admin-block">
+                    <h4>Education 1</h4>
+                    <div class="admin-field"><label>Degree</label><input type="text" id="aEdu1D"
+                            value="Bachelor of Technology (B.Tech) in Computer Science"></div>
+                    <div class="admin-field"><label>School</label><input type="text" id="aEdu1S"
+                            value="Moradabad Institute of Technology (MIT) – AKTU"></div>
+                    <div class="admin-field"><label>Year</label><input type="text" id="aEdu1Y" value="Expected: 2027">
+                    </div>
+                </div>
+                <div class="admin-block">
+                    <h4>Education 2</h4>
+                    <div class="admin-field"><label>Degree</label><input type="text" id="aEdu2D"
+                            value="Jr. High School Diploma – Computer Science Focus"></div>
+                    <div class="admin-field"><label>School</label><input type="text" id="aEdu2S"
+                            value="Sacred Heart Convent School – Chandausi, UP"></div>
+                    <div class="admin-field"><label>Year</label><input type="text" id="aEdu2Y" value="Completed: 2022">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACHIEVEMENTS TAB -->
+            <div class="admin-panel-content" id="tabAch">
+                <div class="admin-block">
+                    <h4>Achievements</h4>
+                    <div id="adminAchList">
+                        <div class="ach-row"><input type="text" class="ach-inp"
+                                value="Core Technical Mentorship Program – Active Participant"><button class="rm-btn"
+                                onclick="this.parentElement.remove()">✕</button></div>
+                        <div class="ach-row"><input type="text" class="ach-inp"
+                                value="Hackathon Project – Agentic AI Assistant"><button class="rm-btn"
+                                onclick="this.parentElement.remove()">✕</button></div>
+                        <div class="ach-row"><input type="text" class="ach-inp"
+                                value="Production-ready AI Solutions for Real-world Problems"><button class="rm-btn"
+                                onclick="this.parentElement.remove()">✕</button></div>
+                        <div class="ach-row"><input type="text" class="ach-inp"
+                                value="ML Internship at Adgama Digital, Gurugram"><button class="rm-btn"
+                                onclick="this.parentElement.remove()">✕</button></div>
+                    </div>
+                    <button class="add-row-btn" id="addAchBtn">+ Add Achievement</button>
+                </div>
+            </div>
+
+            <!-- CONTACT TAB -->
+            <div class="admin-panel-content" id="tabContact">
+                <div class="admin-block">
+                    <h4>Contact Information</h4>
+                    <div class="admin-field"><label>Email</label><input type="text" id="aEmail"
+                            value="abhinavvarshney3005@gmail.com"></div>
+                    <div class="admin-field"><label>Phone</label><input type="text" id="aPhone" value="+91 9528775774">
+                    </div>
+                    <div class="admin-field"><label>Location</label><input type="text" id="aLoc"
+                            value="Chandausi, Uttar Pradesh, India"></div>
+                    <div class="admin-field"><label>GitHub URL</label><input type="text" id="aGithub"
+                            value="github.com/abhinavvarshney"></div>
+                </div>
+            </div>
+
+            <!-- IMAGES TAB -->
+            <div class="admin-panel-content" id="tabImages">
+                <div class="admin-block">
+                    <h4>Hero Wall Photo</h4>
+                    <div class="admin-field">
+                        <label>Main investigation wall image (shown in hero section)</label>
+                        <div class="img-upload-area">
+                            <label class="img-upload-btn" for="imgHero">📁 Upload Image</label>
+                            <input type="file" id="imgHero" accept="image/*" style="display:none">
+                            <img class="img-preview" id="prevHero" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+                <div class="admin-block">
+                    <h4>Case File Avatar</h4>
+                    <div class="admin-field">
+                        <label>Profile/Avatar image (shown in about section)</label>
+                        <div class="img-upload-area">
+                            <label class="img-upload-btn" for="imgAvatar">📁 Upload Image</label>
+                            <input type="file" id="imgAvatar" accept="image/*" style="display:none">
+                            <img class="img-preview" id="prevAvatar" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+                <div class="admin-block">
+                    <h4>Mask Icon (Toggle Button)</h4>
+                    <div class="admin-field">
+                        <label>Mask ON image (shown when mask is active)</label>
+                        <div class="img-upload-area">
+                            <label class="img-upload-btn" for="imgMask">📁 Upload Image</label>
+                            <input type="file" id="imgMask" accept="image/*" style="display:none">
+                            <img class="img-preview" id="prevMask" alt="Preview">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SETTINGS TAB -->
+            <div class="admin-panel-content" id="tabSettings">
+                <div class="admin-block">
+                    <h4>Change Password</h4>
+                    <div class="admin-field"><label>Current Password</label><input type="password" id="setOldPwd"></div>
+                    <div class="admin-field"><label>New Password</label><input type="password" id="setNewPwd"></div>
+                    <div class="admin-field"><label>Confirm New Password</label><input type="password" id="setConfPwd">
+                    </div>
+                    <button class="pwd-change-btn" id="changePwdBtn">🔐 Update Password</button>
+                </div>
+                <div class="admin-block">
+                    <h4>Access Info</h4>
+                    <p style="color:#888;font-family:'Special Elite',monospace;font-size:0.85rem;line-height:1.8;">
+                        🕷️ To open this panel again: Press <strong style="color:var(--spidey-red);">Ctrl + Shift +
+                            A</strong><br>
+                        Or: Type <strong style="color:var(--spidey-red);">spidey</strong> anywhere on the page (without
+                        clicking)<br>
+                        Or: Triple-click the logo in the top-left corner
+                    </p>
+                </div>
+            </div>
+
+            <div class="admin-save-area">
+                <button class="save-btn" id="adminSaveBtn">💾 SAVE ALL</button>
+                <button class="reset-btn" id="adminResetBtn">🔄 RESET</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toastMsg">✓ Updated!</div>
+
+    <script>
+        // ============================================
+        // SOUND ENGINE (Web Audio API)
+        // ============================================
+        let audioCtx = null;
+        let soundReady = false;
+
+        function initAudio() {
+            if (soundReady) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                soundReady = true;
+            } catch (e) { }
+        }
+        document.addEventListener('click', initAudio);
+        document.addEventListener('touchstart', initAudio);
+
+        function playThwip() {
+            if (!audioCtx) return;
+            try {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sawtooth';
+                o.frequency.setValueAtTime(2500, audioCtx.currentTime);
+                o.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.12);
+                g.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+                o.start(); o.stop(audioCtx.currentTime + 0.18);
+                const bs = audioCtx.sampleRate * 0.06;
+                const buf = audioCtx.createBuffer(1, bs, audioCtx.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < bs; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / bs);
+                const n = audioCtx.createBufferSource(); n.buffer = buf;
+                const ng = audioCtx.createGain();
+                n.connect(ng); ng.connect(audioCtx.destination);
+                ng.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                ng.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+                n.start();
+            } catch (e) { }
+        }
+
+        function playSpiderSense() {
+            if (!audioCtx) return;
+            try {
+                const o1 = audioCtx.createOscillator();
+                const o2 = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o1.connect(g); o2.connect(g); g.connect(audioCtx.destination);
+                o1.type = 'sine'; o1.frequency.value = 1200;
+                o2.type = 'sine'; o2.frequency.value = 1207;
+                g.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.7);
+                o1.start(); o2.start();
+                o1.stop(audioCtx.currentTime + 0.7);
+                o2.stop(audioCtx.currentTime + 0.7);
+            } catch (e) { }
+        }
+
+        function playMaskToggle() {
+            if (!audioCtx) return;
+            try {
+                const o = audioCtx.createOscillator();
+                const f = audioCtx.createBiquadFilter();
+                const g = audioCtx.createGain();
+                o.connect(f); f.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sawtooth'; o.frequency.value = 100;
+                f.type = 'bandpass'; f.Q.value = 2;
+                f.frequency.setValueAtTime(500, audioCtx.currentTime);
+                f.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + 0.12);
+                f.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.35);
+                g.gain.setValueAtTime(0.18, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+                o.start(); o.stop(audioCtx.currentTime + 0.35);
+            } catch (e) { }
+        }
+
+        function playUnlock() {
+            if (!audioCtx) return;
+            try {
+                [523, 659, 784, 1047].forEach((freq, i) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.type = 'sine'; o.frequency.value = freq;
+                    const t = audioCtx.currentTime + i * 0.1;
+                    g.gain.setValueAtTime(0, t);
+                    g.gain.linearRampToValueAtTime(0.18, t + 0.02);
+                    g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+                    o.start(t); o.stop(t + 0.25);
+                });
+            } catch (e) { }
+        }
+
+        function playDenied() {
+            if (!audioCtx) return;
+            try {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'square';
+                o.frequency.setValueAtTime(150, audioCtx.currentTime);
+                o.frequency.setValueAtTime(100, audioCtx.currentTime + 0.12);
+                g.gain.setValueAtTime(0.18, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                o.start(); o.stop(audioCtx.currentTime + 0.25);
+            } catch (e) { }
+        }
+
+        function playSave() {
+            if (!audioCtx) return;
+            try {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine';
+                o.frequency.setValueAtTime(880, audioCtx.currentTime);
+                o.frequency.setValueAtTime(1320, audioCtx.currentTime + 0.08);
+                g.gain.setValueAtTime(0.18, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                o.start(); o.stop(audioCtx.currentTime + 0.4);
+            } catch (e) { }
+        }
+
+        function playComicBurst() {
+            if (!audioCtx) return;
+            try {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'square';
+                o.frequency.setValueAtTime(400, audioCtx.currentTime);
+                o.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.12);
+                g.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+                o.start(); o.stop(audioCtx.currentTime + 0.15);
+            } catch (e) { }
+        }
+
+        function playWebShoot() {
+            if (!audioCtx) return;
+            try {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sawtooth';
+                o.frequency.setValueAtTime(3000, audioCtx.currentTime);
+                o.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                g.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+                o.start(); o.stop(audioCtx.currentTime + 0.35);
+                const bs = audioCtx.sampleRate * 0.4;
+                const buf = audioCtx.createBuffer(1, bs, audioCtx.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < bs; i++) d[i] = (Math.random() * 2 - 1) * Math.sin(i / bs * Math.PI);
+                const n = audioCtx.createBufferSource(); n.buffer = buf;
+                const ng = audioCtx.createGain();
+                const nf = audioCtx.createBiquadFilter();
+                nf.type = 'bandpass'; nf.frequency.value = 800; nf.Q.value = 0.5;
+                n.connect(nf); nf.connect(ng); ng.connect(audioCtx.destination);
+                ng.gain.setValueAtTime(0.25, audioCtx.currentTime);
+                ng.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+                n.start();
+            } catch (e) { }
+        }
+
+        function playHover() {
+            if (!audioCtx) return;
+            try {
+                const o = audioCtx.createOscillator();
+                const g = audioCtx.createGain();
+                o.connect(g); g.connect(audioCtx.destination);
+                o.type = 'sine'; o.frequency.value = 600;
+                g.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                o.start(); o.stop(audioCtx.currentTime + 0.08);
+            } catch (e) { }
+        }
+
+        // ============================================
+        // WEB SHOOT ANIMATION (Spider-Man movie style!)
+        // ============================================
+        function webShootTo(btn, targetSelector) {
+            initAudio();
+            playWebShoot();
+
+            const btnRect = btn.getBoundingClientRect();
+            const btnCX = btnRect.left + btnRect.width / 2;
+            const btnCY = btnRect.top + btnRect.height / 2;
+
+            // Flash on button
+            const flash = document.createElement('div');
+            flash.className = 'web-button-flash';
+            btn.style.position = 'relative';
+            btn.appendChild(flash);
+            setTimeout(() => flash.remove(), 300);
+
+            // Create overlay for web strands
+            const overlay = document.createElement('div');
+            overlay.className = 'web-shoot-overlay';
+            document.body.appendChild(overlay);
+
+            const targetX = window.innerWidth / 2;
+            const targetY = window.innerHeight / 2;
+
+            // Shoot 12 web strands from button outward
+            const strandCount = 12;
+            for (let i = 0; i < strandCount; i++) {
+                const angle = (i / strandCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+                const length = 250 + Math.random() * 500;
+                const strand = document.createElement('div');
+                strand.className = 'web-strand';
+                strand.style.left = btnCX + 'px';
+                strand.style.top = btnCY + 'px';
+                strand.style.width = '0px';
+                strand.style.height = (1 + Math.random() * 2) + 'px';
+                strand.style.transform = 'rotate(' + angle + 'rad)';
+                strand.style.transition = 'width ' + (0.15 + Math.random() * 0.15) + 's ease-out';
+                overlay.appendChild(strand);
+                setTimeout(function () { strand.style.width = length + 'px'; }, i * 15);
+            }
+
+            // Web splat impact at center after strands reach
+            setTimeout(function () {
+                var splat = document.createElement('div');
+                splat.className = 'web-splat';
+                splat.style.left = targetX + 'px';
+                splat.style.top = targetY + 'px';
+                overlay.appendChild(splat);
+
+                var ring = document.createElement('div');
+                ring.className = 'web-impact-ring';
+                ring.style.left = targetX + 'px';
+                ring.style.top = targetY + 'px';
+                overlay.appendChild(ring);
+
+                for (var j = 0; j < 6; j++) {
+                    var ms = document.createElement('div');
+                    ms.className = 'web-splat';
+                    ms.style.left = (targetX + (Math.random() - 0.5) * 250) + 'px';
+                    ms.style.top = (targetY + (Math.random() - 0.5) * 250) + 'px';
+                    ms.style.animationDelay = (j * 0.04) + 's';
+                    overlay.appendChild(ms);
+                }
+            }, 180);
+
+            // Pull effect (dark vignette from button position)
+            setTimeout(function () {
+                var pull = document.createElement('div');
+                pull.className = 'web-pull-effect';
+                pull.style.setProperty('--cx', (btnCX / window.innerWidth * 100) + '%');
+                pull.style.setProperty('--cy', (btnCY / window.innerHeight * 100) + '%');
+                document.body.appendChild(pull);
+
+                // Scroll to target
+                setTimeout(function () {
+                    var target = document.querySelector(targetSelector);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setTimeout(function () {
+                        overlay.remove();
+                        pull.remove();
+                    }, 500);
+                }, 550);
+            }, 350);
+        }
+
+        // ============================================
+        // LOADER
+        // ============================================
+        window.addEventListener('load', function () {
+            setTimeout(function () { document.getElementById('loaderScreen').classList.add('hidden'); }, 2200);
+        });
+
+        // ============================================
+        // MASK TOGGLE
+        // ============================================
+        var maskOn = false;
+        var maskToggle = document.getElementById('maskToggle');
+        var maskImg = document.getElementById('maskImg');
+        maskToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            maskOn = !maskOn;
+            document.body.classList.toggle('mask-on', maskOn);
+            playMaskToggle();
+            var savedMask = localStorage.getItem('sp_imgMask');
+            maskImg.src = maskOn ? (savedMask || 'unmask.png') : (localStorage.getItem('sp_maskIcon') || 'mask.png');
+            var flash = document.createElement('div');
+            flash.style.cssText = 'position:fixed;inset:0;background:white;z-index:99980;opacity:0.5;pointer-events:none;transition:opacity 0.5s;';
+            document.body.appendChild(flash);
+            setTimeout(function () { flash.style.opacity = '0'; }, 50);
+            setTimeout(function () { flash.remove(); }, 600);
+        });
+
+        // ============================================
+        // TYPED EFFECT
+        // ============================================
+        var phrases = ['Building Intelligent Web Systems...', 'Spinning AI Automation Pipelines...', 'Training Neural Networks...', 'LangChain • LangGraph • FastAPI', 'With Great Code Comes Great Responsibility', 'Your Friendly Neighborhood AI Engineer'];
+        var pi = 0, ci = 0, del = false;
+        var typedEl = document.getElementById('typedOutput');
+        function typeW() {
+            var c = phrases[pi];
+            typedEl.textContent = del ? c.substring(0, ci - 1) : c.substring(0, ci + 1);
+            del ? ci-- : ci++;
+            var s = del ? 25 : 55;
+            if (!del && ci === c.length) { s = 2200; del = true; }
+            else if (del && ci === 0) { del = false; pi = (pi + 1) % phrases.length; s = 400; }
+            setTimeout(typeW, s);
+        }
+        setTimeout(typeW, 2800);
+
+        // ============================================
+        // SCROLL REVEAL
+        // ============================================
+        var ro = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    e.target.querySelectorAll('.skill-bar-web').forEach(function (b) { b.style.width = b.dataset.w + '%'; });
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal-item').forEach(function (el) { ro.observe(el); });
+
+        // ============================================
+        // SPIDER CRAWL
+        // ============================================
+        var spider = document.getElementById('spiderCrawl');
+        var spiderActive = false;
+        function startSpiderCrawl() {
+            if (spiderActive) return;
+            spiderActive = true;
+            spider.classList.add('active');
+            var x = -30, y = Math.random() * window.innerHeight * 0.7 + 100;
+            spider.style.left = x + 'px'; spider.style.top = y + 'px';
+            var speed = 1.5 + Math.random() * 2;
+            function moveSpider() {
+                x += speed; y += Math.sin(x * 0.02) * 1.5;
+                spider.style.left = x + 'px'; spider.style.top = y + 'px';
+                if (x < window.innerWidth + 50) requestAnimationFrame(moveSpider);
+                else { spider.classList.remove('active'); spiderActive = false; }
+            }
+            moveSpider();
+        }
+        setInterval(function () { if (Math.random() > 0.7) startSpiderCrawl(); }, 12000);
+        setTimeout(startSpiderCrawl, 5000);
+
+        // ============================================
+        // CLICK EFFECTS
+        // ============================================
+        var comicWords = ['THWIP!', 'POW!', 'ZAP!', 'WEB!', 'BAM!', 'SPIDEY!'];
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.secret-admin') || e.target.closest('.pwd-screen')) return;
+            playThwip();
+            var rip = document.createElement('div');
+            rip.className = 'click-ripple';
+            rip.style.left = e.clientX + 'px'; rip.style.top = e.clientY + 'px';
+            document.body.appendChild(rip);
+            setTimeout(function () { rip.remove(); }, 600);
+            if (Math.random() > 0.85) {
+                var burst = document.createElement('div');
+                burst.className = 'comic-burst';
+                burst.textContent = comicWords[Math.floor(Math.random() * comicWords.length)];
+                burst.style.left = e.clientX + 'px'; burst.style.top = (e.clientY - 40) + 'px';
+                document.body.appendChild(burst);
+                requestAnimationFrame(function () { burst.classList.add('show'); });
+                playComicBurst();
+                setTimeout(function () { burst.classList.remove('show'); setTimeout(function () { burst.remove(); }, 400); }, 800);
+            }
+        });
+
+        document.querySelector('.hero-main').addEventListener('mouseenter', function () {
+            var rect = document.querySelector('.hero-main').getBoundingClientRect();
+            var rip = document.createElement('div');
+            rip.className = 'sense-ripple';
+            rip.style.left = (rect.left + rect.width / 2) + 'px';
+            rip.style.top = (rect.top + rect.height / 2) + 'px';
+            document.body.appendChild(rip);
+            setTimeout(function () { rip.remove(); }, 1500);
+            playSpiderSense();
+        });
+
+        // ============================================
+        // SECRET ACCESS
+        // ============================================
+        var keyBuffer = '';
+        document.addEventListener('keydown', function (e) {
+            var activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+            var inInput = (activeTag === 'input' || activeTag === 'textarea');
+            if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+                e.preventDefault();
+                showPwdScreen();
+                return;
+            }
+            if (!inInput && !e.ctrlKey && !e.altKey && !e.metaKey && e.key.length === 1) {
+                keyBuffer += e.key.toLowerCase();
+                if (keyBuffer.length > 10) keyBuffer = keyBuffer.slice(-10);
+                if (keyBuffer.includes('spidey')) { keyBuffer = ''; showPwdScreen(); }
+            }
+        });
+
+        var logoClicks = 0, logoTimer;
+        document.getElementById('navLogo').addEventListener('click', function () {
+            logoClicks++;
+            clearTimeout(logoTimer);
+            logoTimer = setTimeout(function () { logoClicks = 0; }, 600);
+            if (logoClicks >= 3) { logoClicks = 0; showPwdScreen(); }
+        });
+
+        // ============================================
+        // PASSWORD & ADMIN PANEL (FIXED!)
+        // ============================================
+        var DEFAULT_PWD = 'spidey';
+        var pwdScreen = document.getElementById('pwdScreen');
+        var secretAdmin = document.getElementById('secretAdmin');
+        var pwdInput = document.getElementById('pwdInput');
+        var pwdError = document.getElementById('pwdError');
+        var pwdEnterBtn = document.getElementById('pwdEnter');
+        var pwdCancelBtn = document.getElementById('pwdCancel');
+
+        function getPwd() { return localStorage.getItem('sp_password') || DEFAULT_PWD; }
+
+        function showPwdScreen() {
+            initAudio();
+            pwdScreen.style.display = 'flex';
+            pwdScreen.classList.add('active');
+            pwdInput.value = '';
+            pwdError.style.display = 'none';
+            setTimeout(function () { pwdInput.focus(); }, 200);
+        }
+
+        function hidePwdScreen() {
+            pwdScreen.classList.remove('active');
+            pwdScreen.style.display = 'none';
+        }
+
+        function checkPwd() {
+            var entered = pwdInput.value.trim();
+            var correct = getPwd();
+            if (entered === correct) {
+                hidePwdScreen();
+                secretAdmin.style.display = 'block';
+                secretAdmin.classList.add('active');
+                loadAdminData();
+                playUnlock();
+            } else {
+                pwdError.style.display = 'block';
+                pwdInput.value = '';
+                pwdInput.style.borderColor = '#e74c3c';
+                playDenied();
+                setTimeout(function () {
+                    pwdInput.style.borderColor = 'rgba(192,57,43,0.4)';
+                    pwdError.style.display = 'none';
+                }, 2000);
+            }
+        }
+
+        pwdEnterBtn.addEventListener('click', function (e) {
+            e.preventDefault(); e.stopPropagation(); checkPwd();
+        });
+        pwdInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); checkPwd(); }
+        });
+        pwdCancelBtn.addEventListener('click', function (e) {
+            e.preventDefault(); e.stopPropagation(); hidePwdScreen();
+        });
+
+        document.getElementById('adminCloseBtn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            secretAdmin.classList.remove('active');
+            secretAdmin.style.display = 'none';
+        });
+
+        // Tabs
+        document.querySelectorAll('.admin-tab').forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                document.querySelectorAll('.admin-tab').forEach(function (t) { t.classList.remove('active'); });
+                document.querySelectorAll('.admin-panel-content').forEach(function (p) { p.classList.remove('active'); });
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Add achievement
+        document.getElementById('addAchBtn').addEventListener('click', function () {
+            var row = document.createElement('div');
+            row.className = 'ach-row';
+            row.innerHTML = '<input type="text" class="ach-inp" placeholder="Enter achievement..."><button class="rm-btn" onclick="this.parentElement.remove()">\u2715</button>';
+            document.getElementById('adminAchList').appendChild(row);
+        });
+
+        // Image uploads
+        function setupImgUpload(inputId, previewId, storageKey) {
+            var input = document.getElementById(inputId);
+            var prev = document.getElementById(previewId);
+            input.addEventListener('change', function (e) {
+                var file = e.target.files[0]; if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function (ev) {
+                    prev.src = ev.target.result;
+                    prev.classList.add('visible');
+                    localStorage.setItem(storageKey, ev.target.result);
+                    applyImage(storageKey, ev.target.result);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        setupImgUpload('imgHero', 'prevHero', 'sp_imgHero');
+        setupImgUpload('imgAvatar', 'prevAvatar', 'sp_imgAvatar');
+        setupImgUpload('imgMask', 'prevMask', 'sp_maskIcon');
+
+        function applyImage(key, src) {
+            if (key === 'sp_imgHero') document.getElementById('heroImg').src = src;
+            if (key === 'sp_imgAvatar') document.getElementById('avatarImg').src = src;
+            if (key === 'sp_maskIcon' && !maskOn) document.getElementById('maskImg').src = src;
+        }
+        ['sp_imgHero', 'sp_imgAvatar', 'sp_maskIcon'].forEach(function (key) {
+            var src = localStorage.getItem(key);
+            if (src) applyImage(key, src);
+        });
+
+        // Change password
+        document.getElementById('changePwdBtn').addEventListener('click', function () {
+            var old = document.getElementById('setOldPwd').value;
+            var nw = document.getElementById('setNewPwd').value;
+            var conf = document.getElementById('setConfPwd').value;
+            if (old !== getPwd()) { showToast('Current password wrong!'); return; }
+            if (nw.length < 4) { showToast('Password too short (min 4)'); return; }
+            if (nw !== conf) { showToast('Passwords don\'t match!'); return; }
+            localStorage.setItem('sp_password', nw);
+            showToast('Password updated!'); playSave();
+            document.getElementById('setOldPwd').value = '';
+            document.getElementById('setNewPwd').value = '';
+            document.getElementById('setConfPwd').value = '';
+        });
+
+        // Load admin data
+        function loadAdminData() {
+            var d = JSON.parse(localStorage.getItem('spideyData') || '{}');
+            var fields = {
+                aName: 'name', aSubtitle: 'subtitle', aAlias: 'alias', aRole: 'role', aBase: 'base',
+                aDesc1: 'desc1', aDesc2: 'desc2', aDesc3: 'desc3', aStatP: 'statP', aStatT: 'statT', aStatE: 'statE',
+                aP1T: 'p1t', aP1D: 'p1d', aP2T: 'p2t', aP2D: 'p2d', aP3T: 'p3t', aP3D: 'p3d',
+                aExpDate: 'expDate', aExpTitle: 'expTitle', aExpComp: 'expComp',
+                aEdu1D: 'edu1d', aEdu1S: 'edu1s', aEdu1Y: 'edu1y', aEdu2D: 'edu2d', aEdu2S: 'edu2s', aEdu2Y: 'edu2y',
+                aEmail: 'email', aPhone: 'phone', aLoc: 'loc', aGithub: 'github',
+                aPin1: 'pin1', aPin2: 'pin2', aPin3: 'pin3', aPin4: 'pin4',
+                aPin5: 'pin5', aPin6: 'pin6', aPin7: 'pin7', aPin8: 'pin8'
+            };
+            for (var elId in fields) {
+                var el = document.getElementById(elId);
+                if (el && d[fields[elId]]) el.value = d[fields[elId]];
+            }
+            if (d.achievements) {
+                var list = document.getElementById('adminAchList');
+                list.innerHTML = '';
+                d.achievements.forEach(function (a) {
+                    var row = document.createElement('div');
+                    row.className = 'ach-row';
+                    row.innerHTML = '<input type="text" class="ach-inp" value="' + a + '"><button class="rm-btn" onclick="this.parentElement.remove()">\u2715</button>';
+                    list.appendChild(row);
+                });
+            }
+        }
+
+        // Save all
+        document.getElementById('adminSaveBtn').addEventListener('click', function () {
+            var d = {};
+            var fields = {
+                aName: 'name', aSubtitle: 'subtitle', aAlias: 'alias', aRole: 'role', aBase: 'base',
+                aDesc1: 'desc1', aDesc2: 'desc2', aDesc3: 'desc3', aStatP: 'statP', aStatT: 'statT', aStatE: 'statE',
+                aP1T: 'p1t', aP1D: 'p1d', aP2T: 'p2t', aP2D: 'p2d', aP3T: 'p3t', aP3D: 'p3d',
+                aExpDate: 'expDate', aExpTitle: 'expTitle', aExpComp: 'expComp',
+                aEdu1D: 'edu1d', aEdu1S: 'edu1s', aEdu1Y: 'edu1y', aEdu2D: 'edu2d', aEdu2S: 'edu2s', aEdu2Y: 'edu2y',
+                aEmail: 'email', aPhone: 'phone', aLoc: 'loc', aGithub: 'github',
+                aPin1: 'pin1', aPin2: 'pin2', aPin3: 'pin3', aPin4: 'pin4',
+                aPin5: 'pin5', aPin6: 'pin6', aPin7: 'pin7', aPin8: 'pin8'
+            };
+            for (var elId in fields) {
+                var el = document.getElementById(elId);
+                if (el) d[fields[elId]] = el.value;
+            }
+            d.achievements = [];
+            document.querySelectorAll('.ach-inp').forEach(function (inp) { if (inp.value.trim()) d.achievements.push(inp.value); });
+            localStorage.setItem('spideyData', JSON.stringify(d));
+            applyData(d);
+            showToast('All changes saved!'); playSave();
+        });
+
+        function applyData(d) {
+            var map = {
+                name: 'heroName', subtitle: 'heroSubtitle', alias: 'caseAlias', role: 'caseRole', base: 'caseBase',
+                desc1: 'aboutDesc1', desc2: 'aboutDesc2', desc3: 'aboutDesc3',
+                statP: 'statP', statT: 'statT', statE: 'statE',
+                p1t: 'proj1T', p1d: 'proj1D', p2t: 'proj2T', p2d: 'proj2D', p3t: 'proj3T', p3d: 'proj3D',
+                expDate: 'expDate', expTitle: 'expTitle', expComp: 'expCompany',
+                edu1d: 'edu1Deg', edu1s: 'edu1Sch', edu1y: 'edu1Yr', edu2d: 'edu2Deg', edu2s: 'edu2Sch', edu2y: 'edu2Yr',
+                email: 'cEmail', phone: 'cPhone', loc: 'cLoc', github: 'cGithub',
+                pin1: 'pin1', pin2: 'pin2', pin3: 'pin3', pin4: 'pin4',
+                pin5: 'pin5', pin6: 'pin6', pin7: 'pin7', pin8: 'pin8'
+            };
+            for (var key in map) {
+                var el = document.getElementById(map[key]);
+                if (el && d[key] !== undefined) el.textContent = d[key];
+            }
+            if (d.achievements) {
+                var board = document.getElementById('achievementsBoard');
+                var icons = ['\u{1F3C6}', '\u{1F680}', '\u{1F4A1}', '\u{1F3AF}', '\u2B50', '\u{1F31F}', '\u{1F48E}', '\u{1F525}'];
+                board.innerHTML = '';
+                d.achievements.forEach(function (a, i) {
+                    var c = document.createElement('div');
+                    c.className = 'achievement-pin reveal-item visible';
+                    c.style.transform = 'rotate(' + ((i % 2 === 0 ? -2 : 2) * (i % 3 + 1) * 0.5) + 'deg)';
+                    c.innerHTML = '<div class="achievement-pin-icon">' + icons[i % icons.length] + '</div><div class="achievement-pin-text">' + a + '</div>';
+                    board.appendChild(c);
+                });
+            }
+        }
+
+        // Reset
+        document.getElementById('adminResetBtn').addEventListener('click', function () {
+            if (confirm('Reset everything to default?')) {
+                localStorage.removeItem('spideyData');
+                localStorage.removeItem('sp_imgHero');
+                localStorage.removeItem('sp_imgAvatar');
+                localStorage.removeItem('sp_maskIcon');
+                localStorage.removeItem('sp_password');
+                location.reload();
+            }
+        });
+
+        // Load on startup
+        window.addEventListener('DOMContentLoaded', function () {
+            var d = JSON.parse(localStorage.getItem('spideyData') || '{}');
+            if (Object.keys(d).length > 0) applyData(d);
+        });
+
+        // Contact form
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault(); showToast('Web message sent!'); playThwip(); e.target.reset();
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('.nav-links a[href^="#"]').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                e.preventDefault();
+                var t = document.querySelector(a.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        document.getElementById('footerY').textContent = new Date().getFullYear();
+
+        function showToast(msg) {
+            var t = document.getElementById('toastMsg');
+            t.textContent = msg; t.classList.add('show');
+            setTimeout(function () { t.classList.remove('show'); }, 3000);
+        }
+
+        // Parallax
+        document.addEventListener('mousemove', function (e) {
+            if (e.target.closest('.secret-admin') || e.target.closest('.pwd-screen')) return;
+            var x = (e.clientX / window.innerWidth - 0.5) * 2;
+            var y = (e.clientY / window.innerHeight - 0.5) * 2;
+            document.querySelectorAll('.pinned-item').forEach(function (item, i) {
+                var depth = 5 + (i % 3) * 3;
+                item.style.transform += ' translate(' + (x * depth) + 'px, ' + (y * depth) + 'px)';
+            });
+        });
+
+        // Hover sounds
+        document.querySelectorAll('.nav-links a, .cta-btn, .proj-link, .btn-spidey, .pinned-note, .skill-note, .project-polaroid, .achievement-pin').forEach(function (el) {
+            el.addEventListener('mouseenter', function () { playHover(); });
+        });
+    </script>
+</body>
+
+</html>
